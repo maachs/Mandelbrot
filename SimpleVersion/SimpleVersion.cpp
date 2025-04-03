@@ -17,11 +17,13 @@ int main()
         }
     }
 
-    gettimeofday(&start, NULL);
-    int n_windows = 0;
+    char fps_buffer[10] = {};
 
     while (window.isOpen())
     {
+        gettimeofday(&start, NULL);
+        int n_windows = 0;
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -61,16 +63,20 @@ int main()
 
         n_windows++;
 
+        gettimeofday(&end, NULL);
+        long seconds = end.tv_sec - start.tv_sec;
+        long microseconds = end.tv_usec - start.tv_usec;
+        double time_spent = seconds + microseconds * 1e-6;
+        double fps = n_windows / time_spent;
+
+        printf("fps %.3lg\n", fps);
+        n_windows = 0;
+
+
         window.clear();
         window.draw(pixels);
         window.display();
     }
 
-    gettimeofday(&end, NULL);
-    long seconds = end.tv_sec - start.tv_sec;
-    long microseconds = end.tv_usec - start.tv_usec;
-    double time_spent = seconds + microseconds * 1e-6;
-    double fps = n_windows / time_spent;
-    printf("fps %lg\n", fps);
     return 0;
 }
