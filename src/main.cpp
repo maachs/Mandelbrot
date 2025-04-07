@@ -1,6 +1,7 @@
 #include "Mandelbrot.h"
 #include "ArrayVersion.h"
 #include "SimpleVersion.h"
+#include "IntrinVersion.h"
 
 int main(const int argc, const char** argv)
 {
@@ -42,13 +43,12 @@ void MainCycle(timeval start, timeval end, sf::RenderWindow& window, int mode, s
         {
             case ARRAY:  ArrayVersion(pixels, zoom, offset_y, offset_x);
             case SIMPLE: SimpleVersion(pixels, zoom, offset_y, offset_x);
+            case INTRIN: IntrinVersion(pixels, zoom, offset_y, offset_x);
         }
 
         n_windows++;
-
         // TODO consider changing function for getting time
         // TODO rdtsc research
-        //printf("wind %d\n", n_windows);
         if(n_windows == MAX_WINDOWS)
         {
             gettimeofday(&end, NULL);
@@ -128,6 +128,10 @@ void CheckArgs(const char** argv, int* mode)
     else if(!strcmp(argv[1], "array"))
     {
         *mode = SIMPLE;
+    }
+    else if(!strcmp(argv[1], "simd"))
+    {
+        *mode = INTRIN;
     }
     else
     {

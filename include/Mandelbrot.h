@@ -24,7 +24,8 @@ const int MAGIC_CONST_BLUE  = 15;
 
 enum modes
 {
-    ARRAY = 1,
+    INTRIN = 2,
+    ARRAY  = 1,
     SIMPLE = 0
 };
 

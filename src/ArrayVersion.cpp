@@ -25,10 +25,14 @@ void CheckPixelArray(double* x, double* y, double* old_x, double* x0, double* y0
     }
 }
 
-void DoIterationArray(double* x, double* y, double* x0, double* y0, sf::VertexArray& pixels, int xi, int yi)
+void DoIterationArray(double* x0, double* y0, sf::VertexArray& pixels, int xi, int yi)
 {
     int iteration = 0;
     int out_mask = 0;
+
+    double x[BATCH_SIZE] = {};
+    double y[BATCH_SIZE] = {};
+
     while (iteration < MAX_ITERATION && out_mask != 0x0f)
     {
         double old_x[BATCH_SIZE] = {};
@@ -58,11 +62,7 @@ void ArrayVersion(sf::VertexArray& pixels, double zoom, double offset_y, double 
             {
                 x0[i] = (xi + i - X0) / (LENGTH / 4.0) / zoom + offset_x;
             }
-
-            double x[BATCH_SIZE] = {};
-            double y[BATCH_SIZE] = {};
-
-            DoIterationArray(x, y, x0, y0, pixels, xi, yi);
+            DoIterationArray(x0, y0, pixels, xi, yi);
         }
     }
 }
