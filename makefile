@@ -1,13 +1,11 @@
-all: simple && simple-O && array && array-O
+all: mandelbrot #simple && simple-O && array && array-O
 
-simple: ./SimpleVersion/SimpleVersion.cpp ./SimpleVersion/SimpleVersion.h
-	g++ ./SimpleVersion/SimpleVersion.cpp -o SimpleVersion.out -lsfml-graphics -lsfml-window -lsfml-system
+BUILD_DIR = build
+SRC = src
+INCLUDE = include
 
-simple-O: ./SimpleVersion/SimpleVersion.cpp ./SimpleVersion/SimpleVersion.h
-	g++ ./SimpleVersion/SimpleVersion.cpp -o SimpleVersion.out -O3 -lsfml-graphics -lsfml-window -lsfml-system
+mandelbrot: $(SRC)/main.cpp $(SRC)/SimpleVersion.cpp $(SRC)/ArrayVersion.cpp $(SRC)/IntrinVersion.cpp $(INCLUDE)/Mandelbrot.h
+	g++ -I $(INCLUDE)/ $(SRC)/main.cpp $(SRC)/ArrayVersion.cpp $(SRC)/SimpleVersion.cpp $(SRC)/IntrinVersion.cpp -o $(BUILD_DIR)/mandelbrot.out -O3 -lsfml-graphics -lsfml-window -lsfml-system
 
-array-O: ./ArrayVersion/ArrayVersion.cpp ./ArrayVersion/ArrayVersion.h
-	g++ ./ArrayVersion/ArrayVersion.cpp -o ArrayVersion.out -O3 -lsfml-graphics -lsfml-window -lsfml-system
 
-array: ./ArrayVersion/ArrayVersion.cpp ./ArrayVersion/ArrayVersion.h
-	g++ ./ArrayVersion/ArrayVersion.cpp -o ArrayVersion.out -lsfml-graphics -lsfml-window -lsfml-system
+
