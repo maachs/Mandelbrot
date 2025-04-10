@@ -7,6 +7,8 @@
 #include <sys/time.h>
 #include <string.h>
 #include <xmmintrin.h>
+#include <assert.h>
+#include <math.h>
 
 const int BATCH_SIZE = 4;
 
@@ -22,11 +24,18 @@ const int MAGIC_CONST_RED   = 5;
 const int MAGIC_CONST_GREEN = 10;
 const int MAGIC_CONST_BLUE  = 15;
 
+struct Scale
+{
+    double zoom     = 1;
+    double offset_x = 0;
+    double offset_y = 0;
+};
+
 enum modes
 {
     INTRIN = 2,
     ARRAY  = 1,
-    SIMPLE = 0
+    SIMPLE = 3
 };
 
 enum size_window
@@ -52,10 +61,10 @@ enum Zoom
     D_ARROW = 74
 };
 
-void ZoomCount   (double* zoom, double* offsetX, double* offsetY, char key_code);
+void ZoomCount   (Scale* scale, char key_code);
 void ResetScreen (sf::VertexArray& pixels);
-void EventHandler(sf::RenderWindow& window, double* zoom, double* offset_x, double* offset_y);
+void EventHandler(sf::RenderWindow& window, Scale* scale);
 void CheckArgs   (const char** argv, int* mode);
-void MainCycle   (timeval start, timeval end, sf::RenderWindow& window, int mode, sf::VertexArray& pixels);
+void MainCycle   (Scale scale, timeval start, timeval end, sf::RenderWindow& window, int mode, sf::VertexArray& pixels);
 
 #endif

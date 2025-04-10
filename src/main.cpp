@@ -5,6 +5,8 @@
 
 int main(const int argc, const char** argv)
 {
+    struct timeval start, end;
+    Scale scale = {};
     if(argc != 2)
     {
         printf("argc error");
@@ -12,22 +14,18 @@ int main(const int argc, const char** argv)
     }
     int mode = 0;
     CheckArgs(argv, &mode);
-    struct timeval start, end;
 
     sf::RenderWindow window(sf::VideoMode(LENGTH, HIGH), "Mandelbrot");
+    window.setVerticalSyncEnabled(false);
     sf::VertexArray pixels(sf::Points, LENGTH * HIGH);
 
-    MainCycle(start, end, window, mode, pixels);
+    MainCycle(scale ,start, end, window, mode, pixels);
 
     return 0;
 }
 
-void MainCycle(timeval start, timeval end, sf::RenderWindow& window, int mode, sf::VertexArray& pixels)
+void MainCycle(Scale scale, timeval start, timeval end, sf::RenderWindow& window, int mode, sf::VertexArray& pixels)
 {
-    double zoom = 1;
-    double offset_x = 0;
-    double offset_y = 0;
-
     ResetScreen(pixels);
 
     int n_windows = 0;
@@ -35,15 +33,16 @@ void MainCycle(timeval start, timeval end, sf::RenderWindow& window, int mode, s
     {
         gettimeofday(&start, NULL);
 
-        EventHandler(window, &zoom, &offset_x, &offset_y);
+        EventHandler(window, &scale);
 
         ResetScreen(pixels);
 
         switch(mode)
         {
-            case ARRAY:  ArrayVersion(pixels, zoom, offset_y, offset_x);
-            case SIMPLE: SimpleVersion(pixels, zoom, offset_y, offset_x);
-            case INTRIN: IntrinVersion(pixels, zoom, offset_y, offset_x);
+            case ARRAY:  ArrayVersion (pixels, &scale); break;
+            case SIMPLE: SimpleVersion(pixels, &scale); break;
+            case INTRIN: IntrinVersion(pixels, &scale); break;
+            default: printf("switch error\n"); break;
         }
 
         n_windows++;
@@ -67,25 +66,25 @@ void MainCycle(timeval start, timeval end, sf::RenderWindow& window, int mode, s
     }
 }
 
-void ZoomCount(double* zoom, double* offsetX, double* offsetY, char key_code)
+void ZoomCount(Scale* scale, char key_code)
 {
-    double moveStep = 0.1 / *zoom;
+    double moveStep = 0.1 / scale->zoom;
     switch (key_code)
     {
         case W_KEY:
-            *zoom *= zoomStep;
+            scale->zoom *= zoomStep;
             break;
         case S_KEY:
-            *zoom /= zoomStep;
+            scale->zoom /= zoomStep;
             break;
-        case L_ARROW: *offsetX -= moveStep; break;
-        case R_ARROW: *offsetX += moveStep; break;
-        case U_ARROW: *offsetY -= moveStep; break;
-        case D_ARROW: *offsetY += moveStep; break;
+        case L_ARROW: scale->offset_x -= moveStep; break;
+        case R_ARROW: scale->offset_x += moveStep; break;
+        case U_ARROW: scale->offset_y -= moveStep; break;
+        case D_ARROW: scale->offset_y += moveStep; break;
         case R_KEY:
-            *zoom = 1.0;
-            *offsetX = 0.0;
-            *offsetY = 0.0;
+            scale->zoom = 1.0;
+            scale->offset_x = 0.0;
+            scale->offset_y = 0.0;
             break;
     }
 }
@@ -103,7 +102,7 @@ void ResetScreen(sf::VertexArray& pixels)
     }
 }
 
-void EventHandler(sf::RenderWindow& window, double* zoom, double* offset_x, double* offset_y)
+void EventHandler(sf::RenderWindow& window, Scale* scale)
 {
     sf::Event event;
     while (window.pollEvent(event))
@@ -114,7 +113,7 @@ void EventHandler(sf::RenderWindow& window, double* zoom, double* offset_x, doub
         if (event.type == sf::Event::KeyPressed)
         {
             char key_code = event.key.code;
-            ZoomCount(zoom, offset_x, offset_y, key_code);
+            ZoomCount(scale, key_code);
         }
     }
 }
@@ -123,11 +122,11 @@ void CheckArgs(const char** argv, int* mode)
 {
     if(!strcmp(argv[1], "simple"))
     {
-        *mode = ARRAY;
+        *mode = SIMPLE;
     }
     else if(!strcmp(argv[1], "array"))
     {
-        *mode = SIMPLE;
+        *mode = ARRAY;
     }
     else if(!strcmp(argv[1], "simd"))
     {

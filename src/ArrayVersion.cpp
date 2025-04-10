@@ -1,26 +1,21 @@
-#include "ArrayVersion.h"
+#include <ArrayVersion.h>
 
-void CheckPixelArray(double* x, double* y, double* old_x, double* x0, double* y0, int* mask, sf::VertexArray& pixels, int counter, int iteration, int xi, int yi)
+void CheckPixelArray(double* x, double* y, double* x0, double* y0, int* mask, sf::VertexArray& pixels, int counter, int iteration, int xi, int yi)
 {
     if(!(*mask & (1 << counter)))
     {
-        old_x[counter] = x[counter];
+        double old_x = x[counter];
         x[counter] = x[counter] * x[counter] - y[counter] * y[counter] + x0[counter];
-        y[counter] = 2*y[counter] * old_x[counter] + y0[counter];
+        y[counter] = 2 * y[counter] * old_x + y0[counter];
 
         if(x[counter] * x[counter] + y[counter] * y[counter] > MAX_R)
         {
-            int px = xi + counter;
-            int py = yi;
-            for(int elem = 0; elem < BATCH_SIZE; elem++)
-            {
-                int index = py * LENGTH + px;
-                pixels[index].color = sf::Color(
-                            iteration * MAGIC_CONST_RED % MAX_ITERATION,
-                            iteration * MAGIC_CONST_GREEN % MAX_ITERATION,
-                            iteration * MAGIC_CONST_BLUE % MAX_ITERATION);
-                *mask |= (1 << counter);
-            }
+            int index = yi * LENGTH + xi + counter;
+            pixels[index].color = sf::Color(
+                iteration * MAGIC_CONST_RED % MAX_ITERATION,
+                iteration * MAGIC_CONST_GREEN % MAX_ITERATION,
+                iteration * MAGIC_CONST_BLUE % MAX_ITERATION);
+            *mask |= (1 << counter);
         }
     }
 }
@@ -33,34 +28,38 @@ void DoIterationArray(double* x0, double* y0, sf::VertexArray& pixels, int xi, i
     double x[BATCH_SIZE] = {};
     double y[BATCH_SIZE] = {};
 
-    while (iteration < MAX_ITERATION && out_mask != 0x0f)
+    for(int batch_elem = 0; batch_elem < BATCH_SIZE; batch_elem++)
     {
-        double old_x[BATCH_SIZE] = {};
+        x[batch_elem] = x0[batch_elem];
+        y[batch_elem] = y0[batch_elem];
+    }
+
+    while (iteration < MAX_ITERATION && out_mask != ((1 << BATCH_SIZE) - 1))
+    {
         for(int j = 0; j < BATCH_SIZE; j++)
         {
-            CheckPixelArray(x, y, old_x, x0, y0, &out_mask, pixels, j, iteration, xi, yi);
+            CheckPixelArray(x, y, x0, y0, &out_mask, pixels, j, iteration, xi, yi);
         }
-
         iteration++;
     }
 }
 
-void ArrayVersion(sf::VertexArray& pixels, double zoom, double offset_y, double offset_x)
+void ArrayVersion(sf::VertexArray& pixels, Scale* scale)
 {
-   for (int yi = BATCH_SIZE; yi < HIGH - BATCH_SIZE; yi+= BATCH_SIZE)
+    for (int yi = 0; yi < HIGH; yi++)
     {
         double y0[BATCH_SIZE] = {};
-        for(int i = 0; i < BATCH_SIZE; i++)
+        for(int batch_elem = 0; batch_elem < BATCH_SIZE; batch_elem++)
         {
-            y0[i]  = (yi + i - Y0) / (HIGH/ 4.0) / zoom + offset_y;
+            y0[batch_elem] = (yi - Y0) / (HIGH / 4.0) / scale->zoom + scale->offset_y;
         }
 
-        for (int xi = BATCH_SIZE; xi < LENGTH - BATCH_SIZE; xi+= BATCH_SIZE)
+        for (int xi = 0; xi < LENGTH; xi += BATCH_SIZE)
         {
             double x0[BATCH_SIZE] = {};
-            for(int i = 0; i < BATCH_SIZE; i++)
+            for(int i = 0; i < BATCH_SIZE && (xi + i) < LENGTH; i++)
             {
-                x0[i] = (xi + i - X0) / (LENGTH / 4.0) / zoom + offset_x;
+                x0[i] = (xi + i - X0) / (LENGTH / 4.0) / scale->zoom + scale->offset_x;
             }
             DoIterationArray(x0, y0, pixels, xi, yi);
         }
