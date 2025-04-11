@@ -1,6 +1,6 @@
 #include <ArrayVersion.h>
 
-void CheckPixelArray(double* x, double* y, double* x0, double* y0, int* mask, sf::VertexArray& pixels, int counter, int iteration, int xi, int yi)
+inline void CheckPixelArray(double* x, double* y, double* x0, double* y0, int* mask, sf::VertexArray& pixels, int counter, int iteration, int xi, int yi)
 {
     if(!(*mask & (1 << counter)))
     {
@@ -20,7 +20,7 @@ void CheckPixelArray(double* x, double* y, double* x0, double* y0, int* mask, sf
     }
 }
 
-void DoIterationArray(double* x0, double* y0, sf::VertexArray& pixels, int xi, int yi)
+inline void DoIterationArray(double* x0, double* y0, sf::VertexArray& pixels, int xi, int yi)
 {
     int iteration = 0;
     int out_mask = 0;

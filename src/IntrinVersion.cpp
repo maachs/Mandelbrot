@@ -1,6 +1,6 @@
 #include "IntrinVersion.h"
 
-void CheckPixelIntrin(sf::VertexArray& pixels, int points, int *out_mask, int xi, int yi, int iteration)
+inline void CheckPixelIntrin(sf::VertexArray& pixels, int points, int *out_mask, int xi, int yi, int iteration)
 {
     for (int j = 0; j < BATCH_SIZE; j++)
     {
@@ -18,7 +18,7 @@ void CheckPixelIntrin(sf::VertexArray& pixels, int points, int *out_mask, int xi
     }
 }
 
-void DoIterationIntrin(__m128 x0, __m128 y0, sf::VertexArray& pixels, int xi, int yi)
+inline void DoIterationIntrin(__m128 x0, __m128 y0, sf::VertexArray& pixels, int xi, int yi)
 {
     __m128 x = x0;
     __m128 y = y0;

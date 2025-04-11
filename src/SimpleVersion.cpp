@@ -1,6 +1,6 @@
 #include "SimpleVersion.h"
 
-void CheckPixelSimple(int iteration, int xi, int yi, sf::VertexArray& pixels)
+inline void CheckPixelSimple(int iteration, int xi, int yi, sf::VertexArray& pixels)
 {
     if (iteration < MAX_ITERATION)
     {
@@ -12,7 +12,7 @@ void CheckPixelSimple(int iteration, int xi, int yi, sf::VertexArray& pixels)
     }
 }
 
-void DoIterationSimple(sf::VertexArray& pixels, double x0, double y0, int xi, int yi)
+inline void DoIterationSimple(sf::VertexArray& pixels, double x0, double y0, int xi, int yi)
 {
     double x = x0, y = y0;
     int iteration = 0;

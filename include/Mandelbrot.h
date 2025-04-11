@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <sys/time.h>
 #include <string.h>
-#include <xmmintrin.h>
 #include <assert.h>
-#include <math.h>
+#include <xmmintrin.h>
+#include <immintrin.h>
+#include <stdint.h>
 
 const int BATCH_SIZE = 4;
 
@@ -29,6 +29,16 @@ struct Scale
     double zoom     = 1;
     double offset_x = 0;
     double offset_y = 0;
+};
+
+struct Ticks
+{
+    uint64_t* ticks_array;
+    int actual_count;
+    int actual_max;
+    uint64_t start;
+    uint64_t end;
+
 };
 
 enum modes
@@ -63,8 +73,8 @@ enum Zoom
 
 void ZoomCount   (Scale* scale, char key_code);
 void ResetScreen (sf::VertexArray& pixels);
-void EventHandler(sf::RenderWindow& window, Scale* scale);
+void EventHandler(sf::RenderWindow& window, Scale* scale, Ticks* ticks);
 void CheckArgs   (const char** argv, int* mode);
-void MainCycle   (Scale scale, timeval start, timeval end, sf::RenderWindow& window, int mode, sf::VertexArray& pixels);
+void MainCycle   (Scale* scale, Ticks* ticks, sf::RenderWindow& window, int mode, sf::VertexArray& pixels);
 
 #endif
