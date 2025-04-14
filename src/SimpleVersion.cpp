@@ -37,8 +37,6 @@ void SimpleVersion(sf::VertexArray& pixels, Scale* scale)
         {
             double y0 = (yi - Y0) / (HIGH / 4.0) / scale->zoom + scale->offset_y;
 
-            //int iteration = 0;
-
             DoIterationSimple(pixels, x0, y0, xi, yi);
         }
     }

@@ -1,11 +1,28 @@
-all: mandelbrot
+.PHONY: all clean
+#make -j$(nproc)
+CXX := g++
+CXXFLAGS := -O3 -march=native -I ./include/ -flto
+LDFLAGS := -O3 -flto -lsfml-graphics -lsfml-window -lsfml-system
 
-BUILD_DIR = build
-SRC = src
-INCLUDE = include
+BUILD_DIR := build
+SRC_DIR := src
+INCLUDE_DIR := include
 
-mandelbrot: $(SRC)/Ticks.cpp $(SRC)/main.cpp $(SRC)/SimpleVersion.cpp $(SRC)/ArrayVersion.cpp $(SRC)/IntrinVersion.cpp $(INCLUDE)/Mandelbrot.h
-	g++ -I $(INCLUDE)/ $(SRC)/main.cpp $(SRC)/Ticks.cpp $(SRC)/ArrayVersion.cpp $(SRC)/SimpleVersion.cpp $(SRC)/IntrinVersion.cpp -o $(BUILD_DIR)/mandelbrot.out -O3 -lsfml-graphics -lsfml-window -lsfml-system
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
+TARGET := $(BUILD_DIR)/mandelbrot.out
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ_FILES)
+	$(CXX) $(OBJ_FILES) -o $@ $(LDFLAGS)
+
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(INCLUDE_DIR)/*.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -rf $(BUILD_DIR)/*.o
 
 

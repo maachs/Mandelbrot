@@ -28,6 +28,12 @@ int main(const int argc, const char** argv)
 
 void MainCycle(Scale* scale, Ticks* ticks, sf::RenderWindow& window, int mode, sf::VertexArray& pixels)
 {
+    assert(scale);
+    assert(ticks);
+    assert(&window);
+    assert(mode);
+    assert(&pixels);
+
     ResetScreen(pixels);
 
     int n_windows = 0;
@@ -56,7 +62,7 @@ void MainCycle(Scale* scale, Ticks* ticks, sf::RenderWindow& window, int mode, s
         }
 
         n_windows++;
-        //printf("wind %d\n", n_windows);
+
         if(n_windows == MAX_WINDOWS)
         {
             ticks->end = _rdtsc();
@@ -69,10 +75,12 @@ void MainCycle(Scale* scale, Ticks* ticks, sf::RenderWindow& window, int mode, s
         window.draw(pixels);
         window.display();
     }
+    return;
 }
 
 void ZoomCount(Scale* scale, char key_code)
 {
+    assert(scale);
     double moveStep = 0.1 / scale->zoom;
     switch (key_code)
     {
@@ -116,6 +124,7 @@ void EventHandler(sf::RenderWindow& window, Scale* scale, Ticks* ticks)
         {
             PrintAvgTicks(ticks);
             window.close();
+            return;
         }
         if (event.type == sf::Event::KeyPressed)
         {

@@ -6,7 +6,6 @@ void AddTicks(Ticks* ticks)
 
     if(ticks->actual_count == ticks->actual_max)
     {
-        printf("to real\n");
         ticks->ticks_array = (uint64_t*) realloc(ticks->ticks_array, (ticks->actual_max + STEP_SIZE) * sizeof(uint64_t));
         if(ticks->ticks_array == NULL)
         {
@@ -46,7 +45,6 @@ void PrintAvgTicks(Ticks* ticks)
 
     uint64_t avg = sum / ticks->actual_count;
     printf("AVG ticks: %ld\n\n", avg);
-    printf("sum %ld\ncnt %d\n", sum, ticks->actual_count);
 
     TicksDtor(ticks);
 }
