@@ -9,7 +9,7 @@ SRC_DIR := src
 INCLUDE_DIR := include
 
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
-OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
 TARGET := $(BUILD_DIR)/mandelbrot.out
 
